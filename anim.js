@@ -16,9 +16,16 @@
   const GX = 32, GY = 32;
   const AGENT = ['#C0392B','#2E8B57','#1E3FC8'];
 
-  // voxel face palette (light top, gray sides for a 3D read)
-  const FLR = { top:'#F4F5EF', right:'#D7DBD0', left:'#C2C6BB', st:'rgba(20,23,26,.10)' };
-  const OBS = { top:'#394046', right:'#282E33', left:'#191D20', st:'rgba(20,23,26,.30)' };
+  // voxel palette is pulled from CSS variables so it flips with the color scheme
+  let FLR, OBS, SHADOW;
+  function readPalette(){
+    const cs = getComputedStyle(document.documentElement);
+    const v = (n,f)=>{ const x=cs.getPropertyValue(n).trim(); return x||f; };
+    FLR = { top:v('--vox-top','#F4F5EF'), right:v('--vox-right','#D7DBD0'), left:v('--vox-left','#C2C6BB'), st:v('--vox-stroke','rgba(20,23,26,.10)') };
+    OBS = { top:v('--obs-top','#394046'), right:v('--obs-right','#282E33'), left:v('--obs-left','#191D20'), st:v('--obs-stroke','rgba(20,23,26,.30)') };
+    SHADOW = v('--drone-shadow','#14171A');
+  }
+  readPalette();
 
   // movement / behavior tuning
   const SPEED = 0.06, SEP_R = 2.8, MINSEP = 2.0, SENSE_R = 3.0, DRONE_Z = 1.6;
@@ -154,7 +161,7 @@
     const z = DRONE_Z + i*0.32 + Math.sin(t/360 + i*2)*0.2;
 
     const s = proj(a.x, a.y, 0);
-    ctx.globalAlpha = 0.13; ctx.fillStyle = '#14171A';
+    ctx.globalAlpha = 0.13; ctx.fillStyle = SHADOW;
     ctx.beginPath(); ctx.ellipse(s[0], s[1], TW*0.55, TH*0.55, 0, 0, Math.PI*2); ctx.fill();
     ctx.globalAlpha = 1;
 
@@ -239,14 +246,32 @@
   }
 
   function newWaypoint(a){
+    // Head for UNREVEALED cells (frontier) so the whole play area gets covered
+    // and coverage actually climbs to ~100%. Fall back to roaming once it's full.
+    const frontier = [];
+    for(let i=0;i<cells.length;i++){
+      const c = cells[i];
+      if(c.vis && !c.revealed) frontier.push(i);
+    }
     let best=null, bd=-Infinity;
-    for(let n=0;n<140;n++){
-      const x=Math.floor(Math.random()*GX), y=Math.floor(Math.random()*GY);
-      const c = cells[idx(x,y)];
-      if(!c.vis || (c.revealed && c.obstacle)) continue;
-      let score = Math.hypot(x-a.x, y-a.y) + (c.revealed?0:6);   // favor far, unexplored
-      for(const o of agents){ if(o!==a && o.wp){ const s=Math.hypot(x-o.wp.x,y-o.wp.y); if(s<4) score-=(4-s)*2; } }
-      if(score>bd){ bd=score; best={x,y}; }
+    if(frontier.length){
+      const samples = Math.min(frontier.length, 200);
+      for(let k=0;k<samples;k++){
+        const i = frontier[Math.floor(Math.random()*frontier.length)];
+        const x = i%GX, y = (i/GX)|0;
+        let score = Math.hypot(x-a.x, y-a.y);                     // favor far frontier (reveal en route)
+        for(const o of agents){ if(o!==a && o.wp){ const s=Math.hypot(x-o.wp.x,y-o.wp.y); if(s<5) score-=(5-s)*2; } }
+        if(score>bd){ bd=score; best={x,y}; }
+      }
+    } else {
+      for(let n=0;n<140;n++){                                     // all revealed -> keep roaming
+        const x=Math.floor(Math.random()*GX), y=Math.floor(Math.random()*GY);
+        const c = cells[idx(x,y)];
+        if(!c.vis || (c.revealed && c.obstacle)) continue;
+        let score = Math.hypot(x-a.x, y-a.y);
+        for(const o of agents){ if(o!==a && o.wp){ const s=Math.hypot(x-o.wp.x,y-o.wp.y); if(s<4) score-=(4-s)*2; } }
+        if(score>bd){ bd=score; best={x,y}; }
+      }
     }
     if(!best) best = { x:Math.floor(a.x), y:Math.floor(a.y) };
     a.wp = best; plan(a);
@@ -359,7 +384,7 @@
       draw(t);
       const c = coverage();
       setCoverage(c);
-      if(c > 0.9 || frames > 2000) reset();
+      if(c > 0.985 || frames > 2600) reset();
     }
     requestAnimationFrame(loop);
   }
@@ -367,6 +392,8 @@
   build();
   resize();
   window.addEventListener('resize', ()=>{ resize(); draw(0); });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{ readPalette(); draw(0); });
+  window.addEventListener('themechange', ()=>{ readPalette(); draw(0); });
 
   if(reduced){
     for(const c of cells) if(c.vis){ c.revealed=true; c.grow=1; }

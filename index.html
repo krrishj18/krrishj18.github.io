@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Krrish Jain</title>
 <meta name="description" content="Personal website of Krrish Jain, Carnegie Mellon University.">
+<meta name="theme-color" content="#F1F2ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14171A" media="(prefers-color-scheme: dark)">
+<script>
+  // Apply a saved theme override before paint to avoid a flash of the wrong theme.
+  try{ var t=localStorage.getItem('theme'); if(t==='dark'||t==='light') document.documentElement.setAttribute('data-theme',t); }catch(e){}
+</script>
 
 <!-- Favicon (tab icon + the icon Google shows next to the URL) -->
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -42,10 +48,50 @@
   --ax-x:#C0392B;
   --ax-y:#2E8B57;
   --ax-z:#1E3FC8;
+  --scrim:241,242,237;              /* paper as RGB, for translucent overlays */
+
+  /* animation palette (read by anim.js so the voxels flip with the theme) */
+  --vox-top:#F4F5EF; --vox-right:#D7DBD0; --vox-left:#C2C6BB;
+  --obs-top:#394046; --obs-right:#282E33; --obs-left:#191D20;
+  --vox-stroke:rgba(20,23,26,.10); --obs-stroke:rgba(20,23,26,.30);
+  --drone-shadow:#14171A;
 
   --serif:"Newsreader",Georgia,serif;
   --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+
+/* dark values applied when the user forces dark via the toggle */
+:root[data-theme="dark"]{
+  --paper:#14171A;
+  --panel:#1E2327;
+  --ink:#ECEEE9;
+  --ink-2:#C3C8C1;
+  --muted:#8A9299;
+  --rule:#2C3238;
+  --cobalt:#7B93FF;
+  --scrim:20,23,26;
+  --vox-top:#E7E9E2; --vox-right:#B7BCB2; --vox-left:#9AA097;
+  --obs-top:#11151A; --obs-right:#0C1013; --obs-left:#07090B;
+  --vox-stroke:rgba(255,255,255,.07); --obs-stroke:rgba(255,255,255,.16);
+  --drone-shadow:#000000;
+}
+/* auto: follow the system in dark unless the user forced light via the toggle */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14171A;
+    --panel:#1E2327;
+    --ink:#ECEEE9;
+    --ink-2:#C3C8C1;
+    --muted:#8A9299;
+    --rule:#2C3238;
+    --cobalt:#7B93FF;
+    --scrim:20,23,26;
+    --vox-top:#E7E9E2; --vox-right:#B7BCB2; --vox-left:#9AA097;
+    --obs-top:#11151A; --obs-right:#0C1013; --obs-left:#07090B;
+    --vox-stroke:rgba(255,255,255,.07); --obs-stroke:rgba(255,255,255,.16);
+    --drone-shadow:#000000;
+  }
 }
 
 *{box-sizing:border-box}
@@ -67,7 +113,7 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 /* ---------- top menu bar ---------- */
 .topbar{
   position:sticky;top:0;z-index:20;
-  background:rgba(241,242,237,.88);
+  background:rgba(var(--scrim),.88);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--rule);
 }
@@ -88,6 +134,15 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
   color:var(--muted);border:0;
 }
 .topbar-links a:hover{color:var(--cobalt)}
+.theme-toggle{
+  display:flex;align-items:center;
+  margin-left:.4rem;padding-left:clamp(1rem,3vw,1.9rem);
+  border:0;border-left:1px solid var(--rule);
+  background:none;color:var(--muted);cursor:pointer;
+}
+.theme-toggle:hover{color:var(--cobalt)}
+.theme-toggle svg{width:16px;height:16px;display:block;stroke:currentColor;fill:none;stroke-width:1.8}
+.theme-toggle:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:2px}
 
 .wrap{
   max-width:1160px;
@@ -121,7 +176,7 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
   font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--muted);padding:5px 7px;
   display:flex;justify-content:space-between;align-items:center;gap:8px;
-  background:linear-gradient(to top,rgba(241,242,237,.92),rgba(241,242,237,0));
+  background:linear-gradient(to top,rgba(var(--scrim),.92),rgba(var(--scrim),0));
 }
 .cov-legend{display:flex;align-items:center;gap:7px}
 .cov-legend .ag{display:flex;align-items:center;gap:3px}
@@ -222,6 +277,10 @@ footer{
       <a href="#publications">Publications</a>
       <a href="#repositories">Repositories</a>
       <a href="cv.pdf">CV</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2.4M12 19.4v2.4M4.2 12H1.8M22.2 12h-2.4M5.6 5.6 3.9 3.9M20.1 20.1l-1.7-1.7M18.4 5.6l1.7-1.7M3.9 20.1l1.7-1.7"/></svg>
+      </button>
     </div>
   </div>
 </nav>
@@ -335,6 +394,37 @@ footer{
       a.rel = 'noopener noreferrer';
     }
   });
+
+  // Theme toggle: default follows the system; clicking overrides + remembers it.
+  (function(){
+    var root = document.documentElement;
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var btn = document.getElementById('theme-toggle');
+    var sun = btn.querySelector('.icon-sun');
+    var moon = btn.querySelector('.icon-moon');
+
+    function isDark(){
+      var t = root.getAttribute('data-theme');
+      if(t === 'dark') return true;
+      if(t === 'light') return false;
+      return mq.matches;
+    }
+    function updateIcon(){
+      var dark = isDark();
+      sun.style.display  = dark ? 'block' : 'none';   // in dark, offer the sun (switch to light)
+      moon.style.display = dark ? 'none' : 'block';
+    }
+    btn.addEventListener('click', function(){
+      var next = isDark() ? 'light' : 'dark';
+      try{ localStorage.setItem('theme', next); }catch(e){}
+      root.setAttribute('data-theme', next);
+      updateIcon();
+      window.dispatchEvent(new Event('themechange'));  // let the animation re-read its palette
+    });
+    // if following the system and it changes, keep the icon in sync
+    mq.addEventListener('change', updateIcon);
+    updateIcon();
+  })();
 </script>
 <script src="anim.js"></script>
 </body>
