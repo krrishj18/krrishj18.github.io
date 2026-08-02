@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Krrish Jain — Robotics Researcher, Carnegie Mellon</title>
+<meta name="description" content="Krrish Jain is a robotics researcher at Carnegie Mellon University working on multi-robot autonomy, aerial systems, and perception for search and rescue.">
+
+<!-- Open Graph: controls how the link looks when shared on Slack/Twitter/LinkedIn -->
+<meta property="og:title" content="Krrish Jain — Robotics Researcher, Carnegie Mellon">
+<meta property="og:description" content="Multi-robot autonomy, aerial systems, and perception for search and rescue.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://krrishjain.com">
+<!-- <meta property="og:image" content="https://krrishjain.com/preview.png"> -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --paper:#F1F2ED;
+  --panel:#E6E8E0;
+  --ink:#14171A;
+  --ink-2:#3B4348;
+  --muted:#6E7780;
+  --rule:#D3D7CE;
+  --cobalt:#1E3FC8;
+  --ax-x:#C0392B;
+  --ax-y:#2E8B57;
+  --ax-z:#1E3FC8;
+
+  --serif:"Newsreader",Georgia,serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
+a:hover{border-bottom-color:var(--cobalt);color:var(--cobalt)}
+a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:2px}
+
+.wrap{
+  max-width:1160px;
+  margin:0 auto;
+  padding:clamp(2rem,6vw,5.5rem) clamp(1.25rem,5vw,3.5rem) 5rem;
+  display:grid;
+  grid-template-columns:288px minmax(0,1fr);
+  gap:clamp(2.5rem,6vw,5.5rem);
+  align-items:start;
+}
+
+/* ---------- left rail ---------- */
+.rail{position:sticky;top:clamp(2rem,6vw,5.5rem)}
+
+.viewport{
+  position:relative;
+  width:100%;
+  aspect-ratio:3/2;
+  background:var(--panel);
+  border:1px solid var(--rule);
+  overflow:hidden;
+}
+.viewport canvas{display:block;width:100%;height:100%}
+.viewport figcaption{
+  position:absolute;left:0;bottom:0;right:0;
+  font-family:var(--mono);
+  font-size:9.5px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:5px 7px;
+  display:flex;justify-content:space-between;gap:8px;
+  background:linear-gradient(to top,rgba(241,242,237,.92),rgba(241,242,237,0));
+}
+
+.name{
+  font-family:var(--serif);
+  font-weight:500;
+  font-size:2.45rem;
+  line-height:1.02;
+  letter-spacing:-.018em;
+  margin:1.6rem 0 .55rem;
+}
+.role{color:var(--ink-2);font-size:.94rem;line-height:1.5;margin:0 0 .3rem}
+.affil{color:var(--muted);font-size:.94rem;line-height:1.5;margin:0}
+
+.rail nav{margin:1.7rem 0 1.4rem;border-top:1px solid var(--rule);padding-top:1rem}
+.rail nav a{
+  display:block;
+  font-family:var(--mono);
+  font-size:.74rem;
+  letter-spacing:.11em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:.28rem 0;
+  border:0;
+}
+.rail nav a:hover{color:var(--cobalt)}
+
+.links{list-style:none;margin:0;padding:1rem 0 0;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:.35rem .9rem}
+.links a{font-size:.88rem;color:var(--ink-2);border-bottom-color:transparent}
+.links a:hover{border-bottom-color:var(--cobalt)}
+
+.triad{margin-top:1.5rem;display:flex;gap:.75rem;align-items:center}
+.triad span{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
+  color:var(--muted);display:flex;align-items:center;gap:.3rem;
+}
+.triad i{width:16px;height:2px;display:block}
+
+/* ---------- main ---------- */
+main{min-width:0}
+
+section{margin-bottom:3.6rem;scroll-margin-top:2rem}
+section:last-of-type{margin-bottom:2rem}
+
+h2{
+  font-family:var(--mono);
+  font-size:.73rem;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:0 0 1.15rem;
+  padding-bottom:.6rem;
+  border-bottom:1px solid var(--rule);
+}
+
+.lede{
+  font-family:var(--serif);
+  font-size:1.42rem;
+  line-height:1.48;
+  letter-spacing:-.006em;
+  margin:0 0 1.1rem;
+}
+p{margin:0 0 1rem;max-width:62ch}
+p:last-child{margin-bottom:0}
+
+/* research thrusts */
+.thrust{padding:1.15rem 0;border-bottom:1px solid var(--rule)}
+.thrust:first-of-type{padding-top:.2rem}
+.thrust:last-of-type{border-bottom:0;padding-bottom:0}
+.thrust h3{
+  font-family:var(--serif);font-weight:500;font-size:1.16rem;
+  margin:0 0 .3rem;letter-spacing:-.005em;
+}
+.thrust p{color:var(--ink-2);font-size:.95rem;margin:0}
+.tags{margin-top:.55rem;display:flex;flex-wrap:wrap;gap:.3rem .5rem}
+.tags span{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;
+  color:var(--muted);border:1px solid var(--rule);padding:.1rem .42rem;
+}
+
+/* publications */
+.pub{display:grid;grid-template-columns:2.6rem minmax(0,1fr);gap:.9rem;
+  padding:1.15rem 0;border-bottom:1px solid var(--rule)}
+.pub:first-of-type{padding-top:.2rem}
+.pub:last-of-type{border-bottom:0}
+.pub .idx{font-family:var(--mono);font-size:.8rem;color:var(--muted);padding-top:.24rem}
+.pub h3{font-family:var(--serif);font-weight:500;font-size:1.13rem;line-height:1.34;
+  margin:0 0 .3rem;letter-spacing:-.005em}
+.authors{font-size:.9rem;color:var(--ink-2);margin:0 0 .25rem}
+.authors b{font-weight:600;color:var(--ink)}
+.venue{font-family:var(--mono);font-size:.76rem;letter-spacing:.03em;color:var(--muted);margin:0}
+.pubnote{font-size:.9rem;color:var(--ink-2);margin:.45rem 0 0;max-width:60ch}
+.meta{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.3rem .75rem}
+.meta a{font-family:var(--mono);font-size:.73rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--cobalt);border-bottom:1px solid rgba(30,63,200,.28)}
+.meta a:hover{border-bottom-color:var(--cobalt)}
+
+/* projects */
+.proj{padding:1.05rem 0;border-bottom:1px solid var(--rule)}
+.proj:first-of-type{padding-top:.2rem}
+.proj:last-of-type{border-bottom:0;padding-bottom:0}
+.proj h3{font-family:var(--sans);font-weight:600;font-size:1rem;margin:0 0 .25rem}
+.proj p{color:var(--ink-2);font-size:.93rem;margin:0}
+
+/* misc list */
+.rows{list-style:none;margin:0;padding:0}
+.rows li{display:grid;grid-template-columns:8.5rem minmax(0,1fr);gap:1rem;
+  padding:.62rem 0;border-bottom:1px solid var(--rule);font-size:.93rem}
+.rows li:last-child{border-bottom:0}
+.rows .k{font-family:var(--mono);font-size:.73rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);padding-top:.22rem}
+
+footer{
+  border-top:1px solid var(--rule);padding-top:1.1rem;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;
+  color:var(--muted);display:flex;flex-wrap:wrap;gap:.5rem 1.2rem;justify-content:space-between;
+}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:2.5rem}
+  .rail{position:static}
+  .viewport{max-width:340px}
+  .name{font-size:2.2rem}
+  .rail nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ LEFT RAIL ============ -->
+  <header class="rail">
+
+    <figure class="viewport" style="margin:0">
+      <canvas id="map" aria-label="Animation of a team of robots progressively mapping an unknown space"></canvas>
+      <figcaption><span>occupancy · 3 agents</span><span id="cov">0%</span></figcaption>
+    </figure>
+
+    <h1 class="name">Krrish&nbsp;Jain</h1>
+    <p class="role">Robotics researcher — multi-agent autonomy &amp; aerial systems</p>
+    <!-- EDIT: your program and year -->
+    <p class="affil">ECE &amp; Robotics Institute<br>Carnegie Mellon University · AirLab</p>
+
+    <nav aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#publications">Publications</a>
+      <a href="#projects">Projects</a>
+      <a href="#more">Teaching &amp; service</a>
+    </nav>
+
+    <!-- EDIT: replace every href below with your real links -->
+    <ul class="links">
+      <li><a href="mailto:you@andrew.cmu.edu">Email</a></li>
+      <li><a href="https://scholar.google.com/citations?user=XXXX">Scholar</a></li>
+      <li><a href="https://github.com/krrishjain">GitHub</a></li>
+      <li><a href="https://arxiv.org/a/XXXX">arXiv</a></li>
+      <li><a href="https://linkedin.com/in/XXXX">LinkedIn</a></li>
+      <li><a href="cv.pdf">CV</a></li>
+    </ul>
+
+    <div class="triad" aria-hidden="true">
+      <span><i style="background:var(--ax-x)"></i>x</span>
+      <span><i style="background:var(--ax-y)"></i>y</span>
+      <span><i style="background:var(--ax-z)"></i>z</span>
+    </div>
+  </header>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+
+    <section id="about">
+      <h2>About</h2>
+      <p class="lede">I build autonomy for teams of drones that have to work where people can't safely go.</p>
+      <p>I'm a researcher at Carnegie Mellon's Robotics Institute, in the AirLab. My work sits between perception and planning: getting semantic understanding to run onboard a small aerial vehicle, and getting several of those vehicles to divide up a search without a central operator or a reliable radio link.</p>
+      <p>The problems I care about are the ones that only show up outside the lab — degraded communication, maps that are wrong, teammates that drop out mid-mission. Most of what I do ends up as open-source infrastructure other people can fly.</p>
+    </section>
+
+    <section id="research">
+      <h2>Research</h2>
+
+      <div class="thrust">
+        <h3>Multi-robot semantic search</h3>
+        <p>Finding specific targets in unknown environments with a drone team. Semantic detections are fused into a voxel map, triangulated across viewpoints by ray intersection, clustered into target hypotheses, and allocated to robots through a decentralized bid auction.</p>
+        <div class="tags"><span>semantic mapping</span><span>triangulation</span><span>task allocation</span><span>search &amp; rescue</span></div>
+      </div>
+
+      <div class="thrust">
+        <h3>Lifelong planning in unknown, dynamic spaces</h3>
+        <p>Hybrid centralized–decentralized multi-agent path finding for non-holonomic robots, combining PIBT with Hybrid A*, frontier-driven exploration, and encounter-based map fusion so robots reconcile their maps whenever they meet.</p>
+        <div class="tags"><span>MAPF</span><span>PIBT</span><span>hybrid A*</span><span>map fusion</span></div>
+      </div>
+
+      <div class="thrust">
+        <h3>Learning for robust flight</h3>
+        <p>Continual learning for detecting and avoiding aerodynamic disturbances in flight, so a vehicle keeps adapting to conditions it never saw during training instead of failing on them.</p>
+        <div class="tags"><span>continual learning</span><span>disturbance rejection</span><span>control</span></div>
+      </div>
+    </section>
+
+    <section id="publications">
+      <h2>Publications</h2>
+
+      <!--
+        TO ADD A PAPER: copy one <article class="pub"> block, paste it at the TOP,
+        and renumber. Keep your own name inside <b> so it stands out.
+        Delete any <a> in .meta that you don't have a link for.
+      -->
+
+      <article class="pub">
+        <div class="idx">[2]</div>
+        <div>
+          <h3><a href="#">Title of the paper you're second author on</a></h3>
+          <p class="authors">First Author, <b>Krrish Jain</b>, Third Author, Advisor Name</p>
+          <p class="venue">arXiv preprint · 2026</p>
+          <p class="pubnote">One sentence on what the paper actually shows. Optional — delete this line if you'd rather keep the list tight.</p>
+          <div class="meta">
+            <a href="#">arXiv</a>
+            <a href="#">PDF</a>
+            <a href="#">Code</a>
+            <a href="#">BibTeX</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="pub">
+        <div class="idx">[1]</div>
+        <div>
+          <h3><a href="#">DFM2: continual learning for disturbance detection and avoidance</a></h3>
+          <p class="authors"><b>Krrish Jain</b>, Co-author, Co-author</p>
+          <p class="venue">Venue · Year</p>
+          <div class="meta">
+            <a href="#">arXiv</a>
+            <a href="#">PDF</a>
+            <a href="#">Code</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <section id="projects">
+      <h2>Selected projects</h2>
+
+      <div class="proj">
+        <h3><a href="https://github.com/castacks/AirStack">AirStack — automated batch missions</a></h3>
+        <p>Added a batch mission system to AirLab's open-source autonomy stack, letting researchers queue and run mission sets on OSMO without babysitting each trial.</p>
+      </div>
+
+      <div class="proj">
+        <h3>Post-earthquake triage simulation</h3>
+        <p>A collapsed-urban environment in Isaac Sim for testing aerial triage and victim search, built from city asset packs and scanned rubble geometry.</p>
+      </div>
+
+      <div class="proj">
+        <h3>PX4 + Gazebo SITL pipeline</h3>
+        <p>A reproducible Docker pipeline for PX4 v1.15.3 with Gazebo Harmonic, for large outdoor flight experiments before touching real hardware.</p>
+      </div>
+    </section>
+
+    <section id="more">
+      <h2>Teaching &amp; service</h2>
+      <ul class="rows">
+        <li><span class="k">Reviewer</span><span>ICRA, IROS — <em>edit or delete</em></span></li>
+        <li><span class="k">Teaching</span><span>16-XXX Course Name, Teaching Assistant, Semester Year</span></li>
+        <li><span class="k">Elsewhere</span><span>Ultimate frisbee and volleyball with Robots Touch Grass; soccer with Clankers.</span></li>
+      </ul>
+    </section>
+
+    <footer>
+      <span>krrishjain.com</span>
+      <span>Pittsburgh, PA</span>
+      <span>Last updated August 2026</span>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  const canvas = document.getElementById('map');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cov = document.getElementById('cov');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const COLS = 42, ROWS = 28;
+  const C = { unknown:'#E6E8E0', free:'#FAFBF7', occ:'#2B3238', grid:'rgba(20,23,26,.045)' };
+  const AGENT = ['#C0392B','#2E8B57','#1E3FC8'];
+
+  let truth, known, agents, cw, ch;
+
+  function idx(x,y){ return y*COLS + x; }
+
+  function build(){
+    truth = new Uint8Array(COLS*ROWS);      // 0 free, 1 occupied
+    known = new Uint8Array(COLS*ROWS);      // 0 unknown, 1 free, 2 occupied
+
+    for(let x=0;x<COLS;x++){ truth[idx(x,0)]=1; truth[idx(x,ROWS-1)]=1; }
+    for(let y=0;y<ROWS;y++){ truth[idx(0,y)]=1; truth[idx(COLS-1,y)]=1; }
+
+    for(let n=0;n<9;n++){
+      const w = 2+Math.floor(Math.random()*7), h = 2+Math.floor(Math.random()*6);
+      const ox = 2+Math.floor(Math.random()*(COLS-w-4));
+      const oy = 2+Math.floor(Math.random()*(ROWS-h-4));
+      for(let y=oy;y<oy+h;y++) for(let x=ox;x<ox+w;x++) truth[idx(x,y)]=1;
+    }
+
+    agents = [];
+    let guard = 0;
+    while(agents.length<3 && guard++<400){
+      const x = 2+Math.random()*(COLS-4), y = 2+Math.random()*(ROWS-4);
+      if(truth[idx(Math.floor(x),Math.floor(y))]===0) agents.push({x,y,tx:x,ty:y});
+    }
+    agents.forEach(a=>{ truth[idx(Math.floor(a.x),Math.floor(a.y))]=0; });
+  }
+
+  function resize(){
+    const r = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(r.width*dpr);
+    canvas.height = Math.round(r.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    cw = r.width/COLS; ch = r.height/ROWS;
+  }
+
+  // cheap raycast reveal, so obstacles actually occlude
+  function sense(a){
+    const RANGE = 7;
+    for(let k=0;k<72;k++){
+      const th = (k/72)*Math.PI*2, dx = Math.cos(th), dy = Math.sin(th);
+      for(let s=0;s<RANGE*2;s++){
+        const px = Math.floor(a.x + dx*s*0.5), py = Math.floor(a.y + dy*s*0.5);
+        if(px<0||py<0||px>=COLS||py>=ROWS) break;
+        const i = idx(px,py);
+        if(truth[i]===1){ known[i]=2; break; }
+        known[i]=1;
+      }
+    }
+  }
+
+  function retarget(a){
+    let best=null, bd=Infinity;
+    for(let n=0;n<70;n++){
+      const x = Math.floor(Math.random()*COLS), y = Math.floor(Math.random()*ROWS);
+      if(known[idx(x,y)]!==0 || truth[idx(x,y)]===1) continue;
+      const d = Math.hypot(x-a.x, y-a.y);
+      if(d<bd){ bd=d; best={x,y}; }
+    }
+    if(best){ a.tx=best.x+.5; a.ty=best.y+.5; }
+    else { a.tx = 2+Math.random()*(COLS-4); a.ty = 2+Math.random()*(ROWS-4); }
+  }
+
+  function step(){
+    for(const a of agents){
+      let dx = a.tx-a.x, dy = a.ty-a.y;
+      const d = Math.hypot(dx,dy);
+      if(d < .45){ retarget(a); continue; }
+      const sp = 0.085;
+      let nx = a.x + (dx/d)*sp, ny = a.y + (dy/d)*sp;
+      if(truth[idx(Math.floor(nx),Math.floor(ny))]===1){ retarget(a); continue; }
+      a.x=nx; a.y=ny;
+      sense(a);
+    }
+  }
+
+  function draw(){
+    const r = canvas.getBoundingClientRect();
+    ctx.clearRect(0,0,r.width,r.height);
+
+    for(let y=0;y<ROWS;y++){
+      for(let x=0;x<COLS;x++){
+        const k = known[idx(x,y)];
+        ctx.fillStyle = k===0 ? C.unknown : (k===2 ? C.occ : C.free);
+        ctx.fillRect(x*cw, y*ch, cw+.5, ch+.5);
+      }
+    }
+
+    ctx.strokeStyle = C.grid; ctx.lineWidth = .5;
+    ctx.beginPath();
+    for(let x=0;x<=COLS;x+=3){ ctx.moveTo(x*cw,0); ctx.lineTo(x*cw,r.height); }
+    for(let y=0;y<=ROWS;y+=3){ ctx.moveTo(0,y*ch); ctx.lineTo(r.width,y*ch); }
+    ctx.stroke();
+
+    agents.forEach((a,i)=>{
+      const px=a.x*cw, py=a.y*ch;
+      ctx.strokeStyle = AGENT[i]; ctx.lineWidth = 1; ctx.globalAlpha = .5;
+      ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = AGENT[i];
+      ctx.beginPath(); ctx.arc(px,py,2.4,0,Math.PI*2); ctx.fill();
+    });
+  }
+
+  function coverage(){
+    let seen=0; for(let i=0;i<known.length;i++) if(known[i]!==0) seen++;
+    return seen/known.length;
+  }
+
+  function reset(){ build(); agents.forEach(sense); }
+
+  let last = 0;
+  function loop(t){
+    if(t-last > 55){
+      last = t;
+      step();
+      draw();
+      const c = coverage();
+      if(cov) cov.textContent = Math.round(c*100)+'%';
+      if(c > 0.86) reset();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  reset();
+  resize();
+  window.addEventListener('resize', ()=>{ resize(); draw(); });
+
+  if(reduced){
+    for(let n=0;n<180;n++) step();
+    draw();
+    if(cov) cov.textContent = Math.round(coverage()*100)+'%';
+  } else {
+    requestAnimationFrame(loop);
+  }
+})();
+</script>
+</body>
+</html>
