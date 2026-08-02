@@ -3,7 +3,14 @@
   if(!canvas) return;
   const ctx = canvas.getContext('2d');
   const cov = document.getElementById('cov');
+  const covbar = document.getElementById('covbar');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function setCoverage(c){
+    const pct = Math.round(c*100);
+    if(cov) cov.textContent = pct+'%';
+    if(covbar) covbar.style.width = pct+'%';
+  }
 
   // ---- world grid (oversized so it overflows the banner and leaves no empty corners) ----
   const GX = 32, GY = 32;
@@ -49,7 +56,9 @@
     agents = [];
     for(let i=0;i<3;i++){
       const x = GX/2 + (i-1)*2.2, y = GY/2 + (i-1)*1.4;
-      agents.push({ x, y, wp:null, path:[] });
+      // prio = i (lower number = higher priority). Drones only yield to higher
+      // priority, so avoidance is asymmetric and can never deadlock.
+      agents.push({ x, y, wp:null, path:[], bestDist:Infinity, noProg:0, prio:i });
     }
   }
 
@@ -69,15 +78,34 @@
     ORY = CH*0.54 - N*TH;                            // ground centered a touch low for headroom
 
     // "play area": inset region drones patrol, so they stay on-screen.
-    // Sensing still reaches past it, so the corners keep filling in.
+    // Sensing still reaches past it, so white voxels keep filling everywhere.
     const PADX = CW*0.08;
     const PADT = Math.max(CH*0.14, DRONE_Z*VH + 14);  // headroom for drone altitude at top
     const PADB = CH*0.10;
-    visCount = 0;
+
+    // UI overlays the drones must not put obstacles or waypoints under:
+    //   - axis gizmo (top-left)   - coverage/legend caption (bottom strip)
+    const GZ_W = 78, GZ_H = 68;      // gizmo footprint (px)
+    const CAP_H = 30;                // caption strip height (px)
+    const WP_GAP = 16;               // extra breathing room for waypoints
+    // waypoint keep-out: ground footprint of the overlays + gap
+    const wpBlocked = (px,py) => (px < GZ_W+WP_GAP && py < GZ_H+WP_GAP) || py > CH-(CAP_H+WP_GAP);
+
+    visCount = 0; maxH = 1;
     for(let y=0;y<GY;y++) for(let x=0;x<GX;x++){
+      const c = cells[idx(x,y)];
       const p = proj(x+0.5, y+0.5, 0);
-      const v = p[0] >= PADX && p[0] <= CW-PADX && p[1] >= PADT && p[1] <= CH-PADB;
-      cells[idx(x,y)].vis = v;
+      // no black voxels overlapping the overlays. Obstacles rise upward, so also
+      // demote ones just below the gizmo whose top would poke up into it.
+      if(c.obstacle){
+        const topY = p[1] - c.h*VH;
+        if((p[0] < GZ_W+4 && topY < GZ_H+4) || p[1] > CH-(CAP_H+2)){ c.obstacle=false; c.h=1; }
+      }
+      if(c.h>maxH) maxH=c.h;
+      // waypoints: inside the inset play area AND clear of the overlays
+      const v = !wpBlocked(p[0], p[1])
+             && p[0]>=PADX && p[0]<=CW-PADX && p[1]>=PADT && p[1]<=CH-PADB;
+      c.vis = v;
       if(v) visCount++;
     }
   }
@@ -230,6 +258,7 @@
       if(c.vis && !(c.revealed && c.obstacle)){ a.wp={x,y}; plan(a); }
       tries++;
     }
+    a.bestDist = Infinity; a.noProg = 0;   // reset progress tracker for the new goal
   }
 
   function sense(a){
@@ -251,26 +280,30 @@
     const d=Math.hypot(dx,dy)||1e-6;
     if(d<0.28){ a.path.shift(); return; }
 
-    // separation steering from other drones
+    // separation steering — only yield to HIGHER-priority drones (asymmetric,
+    // so two drones can never lock into a mutual standoff)
     let sepx=0, sepy=0;
     for(const o of agents){
-      if(o===a) continue;
+      if(o===a || o.prio >= a.prio) continue;
       const ox=a.x-o.x, oy=a.y-o.y, od=Math.hypot(ox,oy);
       if(od>0 && od<SEP_R){ sepx+=(ox/od)*(SEP_R-od); sepy+=(oy/od)*(SEP_R-od); }
     }
-    let vx=dx/d + sepx*0.55, vy=dy/d + sepy*0.55;
+    // repulsion + a consistent perpendicular "swirl" so drones slide past
+    // each other instead of locking head-on
+    let vx=dx/d + sepx*0.55 - sepy*0.6, vy=dy/d + sepy*0.55 + sepx*0.6;
     const vl=Math.hypot(vx,vy)||1e-6;
     a.x += (vx/vl)*SPEED; a.y += (vy/vl)*SPEED;
   }
 
   function enforceSeparation(){
+    // agents[i] has higher priority than agents[j] for i<j. Only move the
+    // lower-priority drone aside so the higher one keeps a smooth course.
     for(let i=0;i<agents.length;i++) for(let j=i+1;j<agents.length;j++){
       const a=agents[i], b=agents[j];
       let dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy);
       if(d<MINSEP){
         if(d<1e-4){ dx=Math.random()-0.5; dy=Math.random()-0.5; d=Math.hypot(dx,dy)||1e-6; }
-        const push=(MINSEP-d)/2;
-        a.x-=(dx/d)*push; a.y-=(dy/d)*push;
+        const push=(MINSEP-d);
         b.x+=(dx/d)*push; b.y+=(dy/d)*push;
       }
     }
@@ -286,6 +319,18 @@
       follow(a);
     }
     enforceSeparation();
+
+    // break standoffs: track PROGRESS toward the waypoint (not raw motion — the
+    // separation push jitters them in place, which would mask a real deadlock).
+    // If a drone gets no closer to its goal for a while, hand it a fresh one.
+    for(const a of agents){
+      if(!a.wp) continue;
+      const dwp = Math.hypot((a.wp.x+0.5)-a.x, (a.wp.y+0.5)-a.y);
+      if(dwp < a.bestDist - 0.04){ a.bestDist = dwp; a.noProg = 0; }
+      else a.noProg++;
+      if(a.noProg > 48) newWaypoint(a);
+    }
+
     for(const c of cells) if(c.revealed && c.grow<1) c.grow=Math.min(1, c.grow+0.09);
   }
 
@@ -313,7 +358,7 @@
       step();
       draw(t);
       const c = coverage();
-      if(cov) cov.textContent = Math.round(c*100)+'%';
+      setCoverage(c);
       if(c > 0.9 || frames > 2000) reset();
     }
     requestAnimationFrame(loop);
@@ -326,7 +371,7 @@
   if(reduced){
     for(const c of cells) if(c.vis){ c.revealed=true; c.grow=1; }
     draw(0);
-    if(cov) cov.textContent = '100%';
+    setCoverage(1);
   } else {
     requestAnimationFrame(loop);
   }

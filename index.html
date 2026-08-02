@@ -107,9 +107,16 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
   position:absolute;left:0;bottom:0;right:0;
   font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--muted);padding:5px 7px;
-  display:flex;justify-content:space-between;gap:8px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
   background:linear-gradient(to top,rgba(241,242,237,.92),rgba(241,242,237,0));
 }
+.cov-legend{display:flex;align-items:center;gap:7px}
+.cov-legend .ag{display:flex;align-items:center;gap:3px}
+.cov-legend .ag i{width:6px;height:6px;border-radius:50%;display:block}
+.cov-bar{position:relative;width:34px;height:4px;overflow:hidden;display:block;
+  background:var(--panel);border:1px solid var(--rule)}
+.cov-bar i{position:absolute;left:0;top:0;bottom:0;width:0;display:block;
+  background:linear-gradient(90deg,#C0392B,#2E8B57,#1E3FC8);transition:width .2s linear}
 
 .name{
   font-family:var(--serif);
@@ -136,12 +143,8 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 .links svg{width:15px;height:15px;flex:none;color:var(--muted)}
 .links a:hover svg{color:var(--cobalt)}
 
-.triad{margin-top:1.5rem;display:flex;gap:.75rem;align-items:center}
-.triad span{
-  font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;
-  color:var(--muted);display:flex;align-items:center;gap:.3rem;
-}
-.triad i{width:16px;height:2px;display:block}
+/* world-frame axis gizmo overlaid on the animation viewport */
+.frame-axes{position:absolute;top:6px;left:8px;pointer-events:none}
 
 main{min-width:0}
 section{margin-bottom:3.6rem;scroll-margin-top:4.5rem}
@@ -243,12 +246,6 @@ footer{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
         CV</a></li>
     </ul>
-
-    <div class="triad" aria-hidden="true">
-      <span><i style="background:var(--ax-x)"></i>x</span>
-      <span><i style="background:var(--ax-y)"></i>y</span>
-      <span><i style="background:var(--ax-z)"></i>z</span>
-    </div>
   </header>
 
   <main>
@@ -256,11 +253,33 @@ footer{
     <section id="about">
       <figure class="about-fig">
         <canvas id="map" aria-label="Decorative animation"></canvas>
-        <figcaption><span>fig · 01</span><span id="cov">0%</span></figcaption>
+        <svg class="frame-axes" width="66" height="58" viewBox="0 0 80 70" fill="none" aria-hidden="true">
+          <defs>
+            <marker id="ax" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#C0392B"/></marker>
+            <marker id="ay" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#2E8B57"/></marker>
+            <marker id="az" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1E3FC8"/></marker>
+          </defs>
+          <line x1="38" y1="40" x2="64" y2="53" stroke="#C0392B" stroke-width="2" stroke-linecap="round" marker-end="url(#ax)"/>
+          <line x1="38" y1="40" x2="12" y2="53" stroke="#2E8B57" stroke-width="2" stroke-linecap="round" marker-end="url(#ay)"/>
+          <line x1="38" y1="40" x2="38" y2="10" stroke="#1E3FC8" stroke-width="2" stroke-linecap="round" marker-end="url(#az)"/>
+          <text x="69" y="59" font-family="IBM Plex Mono, monospace" font-size="9" fill="#C0392B">x</text>
+          <text x="4"  y="59" font-family="IBM Plex Mono, monospace" font-size="9" fill="#2E8B57">y</text>
+          <text x="33" y="9"  font-family="IBM Plex Mono, monospace" font-size="9" fill="#1E3FC8">z</text>
+        </svg>
+        <figcaption>
+          <span>fig · 01</span>
+          <span class="cov-legend">
+            <span class="ag"><i style="background:#C0392B"></i>01</span>
+            <span class="ag"><i style="background:#2E8B57"></i>02</span>
+            <span class="ag"><i style="background:#1E3FC8"></i>03</span>
+            <span class="cov-bar"><i id="covbar"></i></span>
+            <span id="cov">0%</span>
+          </span>
+        </figcaption>
       </figure>
       <h2>About</h2>
       <p class="lede">Hi, I'm Krrish!</p>
-      <p>I'm a Master's student at the Robotics Institute, Carnegie Mellon University, advised by Sebastian Scherer in the <a href="https://theairlab.org/">AirLab</a>. My research focuses on multi-robot coordination, semantic search planning, and navigation in large, unknown environments.</p>
+      <p>I'm a Master's student at the Robotics Institute, Carnegie Mellon University, advised by Sebastian Scherer at the <a href="https://theairlab.org/">AirLab</a>. My research focuses on multi-robot coordination, semantic search planning, and navigation in large, unknown environments.</p>
     </section>
 
     <section id="publications">
