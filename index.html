@@ -51,7 +51,7 @@ a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule)}
 a:hover{border-bottom-color:var(--cobalt);color:var(--cobalt)}
 a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:2px}
 
-/* ---------- top menu bar (academicpages-style) ---------- */
+/* ---------- top menu bar ---------- */
 .topbar{
   position:sticky;top:0;z-index:20;
   background:rgba(241,242,237,.88);
@@ -89,23 +89,24 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 /* ---------- left rail ---------- */
 .rail{position:sticky;top:calc(3.5rem + clamp(1rem,3vw,2rem))}
 
-.viewport{
-  position:relative;
-  width:100%;
-  aspect-ratio:3/2;
-  background:var(--panel);
-  border:1px solid var(--rule);
-  overflow:hidden;
+/* circular profile photo */
+.avatar{
+  display:block;width:100%;aspect-ratio:1;
+  border-radius:50%;object-fit:cover;
+  border:1px solid var(--rule);background:var(--panel);
 }
-.viewport canvas{display:block;width:100%;height:100%}
-.viewport figcaption{
+
+/* animation as a wide figure atop About */
+.about-fig{
+  position:relative;width:100%;aspect-ratio:12/5;
+  background:var(--panel);border:1px solid var(--rule);
+  overflow:hidden;margin:0 0 1.5rem;
+}
+.about-fig canvas{display:block;width:100%;height:100%}
+.about-fig figcaption{
   position:absolute;left:0;bottom:0;right:0;
-  font-family:var(--mono);
-  font-size:9.5px;
-  letter-spacing:.09em;
-  text-transform:uppercase;
-  color:var(--muted);
-  padding:5px 7px;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);padding:5px 7px;
   display:flex;justify-content:space-between;gap:8px;
   background:linear-gradient(to top,rgba(241,242,237,.92),rgba(241,242,237,0));
 }
@@ -121,7 +122,6 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 .role{color:var(--ink-2);font-size:.94rem;line-height:1.5;margin:0 0 .3rem}
 .affil{color:var(--muted);font-size:.94rem;line-height:1.5;margin:0}
 
-/* ---------- socials list (stacked, icon + label) ---------- */
 .links{
   list-style:none;margin:1.6rem 0 0;padding:1.1rem 0 0;
   border-top:1px solid var(--rule);
@@ -143,35 +143,23 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 }
 .triad i{width:16px;height:2px;display:block}
 
-/* ---------- main ---------- */
 main{min-width:0}
-
 section{margin-bottom:3.6rem;scroll-margin-top:4.5rem}
 section:last-of-type{margin-bottom:2rem}
 
 h2{
-  font-family:var(--mono);
-  font-size:.73rem;
-  font-weight:500;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin:0 0 1.15rem;
-  padding-bottom:.6rem;
-  border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:.73rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  margin:0 0 1.15rem;padding-bottom:.6rem;border-bottom:1px solid var(--rule);
 }
 
 .lede{
-  font-family:var(--serif);
-  font-size:1.42rem;
-  line-height:1.48;
-  letter-spacing:-.006em;
-  margin:0 0 1.1rem;
+  font-family:var(--serif);font-size:1.42rem;line-height:1.48;
+  letter-spacing:-.006em;margin:0 0 1.1rem;
 }
 p{margin:0 0 1rem;max-width:62ch}
 p:last-child{margin-bottom:0}
 
-/* publications */
 .pub{display:grid;grid-template-columns:2.6rem minmax(0,1fr);gap:.9rem;
   padding:1.15rem 0;border-bottom:1px solid var(--rule)}
 .pub:first-of-type{padding-top:.2rem}
@@ -182,13 +170,11 @@ p:last-child{margin-bottom:0}
 .authors{font-size:.9rem;color:var(--ink-2);margin:0 0 .25rem}
 .authors b{font-weight:600;color:var(--ink)}
 .venue{font-family:var(--mono);font-size:.76rem;letter-spacing:.03em;color:var(--muted);margin:0}
-.pubnote{font-size:.9rem;color:var(--ink-2);margin:.45rem 0 0;max-width:60ch}
 .meta{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.3rem .75rem}
 .meta a{font-family:var(--mono);font-size:.73rem;letter-spacing:.06em;text-transform:uppercase;
   color:var(--cobalt);border-bottom:1px solid rgba(30,63,200,.28)}
 .meta a:hover{border-bottom-color:var(--cobalt)}
 
-/* repositories */
 .repo{padding:1.05rem 0;border-bottom:1px solid var(--rule)}
 .repo:first-of-type{padding-top:.2rem}
 .repo:last-of-type{border-bottom:0;padding-bottom:0}
@@ -204,7 +190,7 @@ footer{
 @media (max-width:860px){
   .wrap{grid-template-columns:1fr;gap:2.5rem}
   .rail{position:static}
-  .viewport{max-width:340px}
+  .avatar{max-width:240px}
   .name{font-size:2.2rem}
 }
 @media (prefers-reduced-motion:reduce){
@@ -215,7 +201,6 @@ footer{
 </head>
 <body id="top">
 
-<!-- ============ TOP MENU BAR ============ -->
 <nav class="topbar" aria-label="Primary">
   <div class="topbar-inner">
     <a class="brand" href="#top">Krrish Jain</a>
@@ -229,21 +214,14 @@ footer{
 
 <div class="wrap">
 
-  <!-- ============ LEFT RAIL ============ -->
   <header class="rail">
 
-    <figure class="viewport" style="margin:0">
-      <canvas id="map" aria-label="Decorative animation"></canvas>
-      <figcaption><span>fig · 01</span><span id="cov">0%</span></figcaption>
-    </figure>
+    <img class="avatar" src="profile_photo.jpeg" alt="Krrish Jain">
 
     <h1 class="name">Krrish&nbsp;Jain</h1>
-    <!-- EDIT: your role / research area -->
-    <p class="role">Graduate Researcher @ AirLab</p>
-    <!-- EDIT: your program / department -->
+    <p class="role">Graduate Researcher @ <a href="https://theairlab.org/">AirLab</a></p>
     <p class="affil">Robotics Institute<br>Carnegie Mellon University</p>
 
-    <!-- EDIT: replace every href below with your real links; delete any you don't use -->
     <ul class="links">
       <li><a href="mailto:krrishj@andrew.cmu.edu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
@@ -275,10 +253,13 @@ footer{
     </div>
   </header>
 
-  <!-- ============ MAIN ============ -->
   <main>
 
     <section id="about">
+      <figure class="about-fig">
+        <canvas id="map" aria-label="Decorative animation"></canvas>
+        <figcaption><span>fig · 01</span><span id="cov">0%</span></figcaption>
+      </figure>
       <h2>About</h2>
       <p class="lede">A short one-line introduction about yourself goes here.</p>
       <p>This is placeholder text. Write a couple of sentences about who you are, what you work on, and what you care about. Replace it with your own words whenever you're ready.</p>
@@ -287,17 +268,10 @@ footer{
 
     <section id="publications">
       <h2>Publications</h2>
-
-      <!--
-        TO ADD A PAPER: copy one <article class="pub"> block, paste it at the TOP,
-        and renumber. Keep your own name inside <b> so it stands out.
-        Delete any <a> in .meta that you don't have a link for.
-      -->
-
       <article class="pub">
-        <div class="idx">[2]</div>
+        <div class="idx">[1]</div>
         <div>
-          <h3><a href="#">Don't Fool Me Twice: Adapting to Adversity in the Wild with Experience-Driven Reasoning</a></h3>
+          <h3><a href="https://arxiv.org/html/2605.31119v1">Don't Fool Me Twice: Adapting to Adversity in the Wild with Experience-Driven Reasoning</a></h3>
           <p class="authors">Navin Sriram Ravie, Andrew Jong, <b>Krrish Jain</b>, John Liu, Omar Alama, Bijo Sebastian, Sebastian Scherer</p>
           <p class="venue">IROS · 2026</p>
           <div class="meta">
@@ -307,32 +281,19 @@ footer{
           </div>
         </div>
       </article>
-
     </section>
 
     <section id="repositories">
       <h2>Repositories</h2>
-
       <div class="repo">
         <h3><a href="https://github.com/castacks/AirStack">AirStack</a></h3>
-        <p>AirStack is a comprehensive, modular autonomy stack for embodied AI and robotics developed by the AirLab at Carnegie Mellon University's Robotics Institute. It provides a complete framework for developing, testing, and deploying autonomous mobile systems in both simulated and real-world environments.
-        </p>
-      </div>
-
-      <div class="repo">
-        <h3><a href="#">another-repository</a></h3>
-        <p>A one-line description of what this project or repository does.</p>
-      </div>
-
-      <div class="repo">
-        <h3><a href="#">third-repository</a></h3>
-        <p>A one-line description of what this project or repository does.</p>
+        <p>AirStack is a comprehensive, modular autonomy stack for embodied AI and robotics developed by the AirLab at Carnegie Mellon University's Robotics Institute. It provides a complete framework for developing, testing, and deploying autonomous mobile systems in both simulated and real-world environments.</p>
       </div>
     </section>
 
     <footer>
       <span>krrishjain.com</span>
-      <span>Your location</span>
+      <span>Pittsburgh</span>
       <span>Last updated 2026</span>
     </footer>
 
@@ -340,153 +301,15 @@ footer{
 </div>
 
 <script>
-(function(){
-  const canvas = document.getElementById('map');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const cov = document.getElementById('cov');
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const COLS = 42, ROWS = 28;
-  const C = { unknown:'#E6E8E0', free:'#FAFBF7', occ:'#2B3238', grid:'rgba(20,23,26,.045)' };
-  const AGENT = ['#C0392B','#2E8B57','#1E3FC8'];
-
-  let truth, known, agents, cw, ch;
-
-  function idx(x,y){ return y*COLS + x; }
-
-  function build(){
-    truth = new Uint8Array(COLS*ROWS);      // 0 free, 1 occupied
-    known = new Uint8Array(COLS*ROWS);      // 0 unknown, 1 free, 2 occupied
-
-    for(let x=0;x<COLS;x++){ truth[idx(x,0)]=1; truth[idx(x,ROWS-1)]=1; }
-    for(let y=0;y<ROWS;y++){ truth[idx(0,y)]=1; truth[idx(COLS-1,y)]=1; }
-
-    for(let n=0;n<9;n++){
-      const w = 2+Math.floor(Math.random()*7), h = 2+Math.floor(Math.random()*6);
-      const ox = 2+Math.floor(Math.random()*(COLS-w-4));
-      const oy = 2+Math.floor(Math.random()*(ROWS-h-4));
-      for(let y=oy;y<oy+h;y++) for(let x=ox;x<ox+w;x++) truth[idx(x,y)]=1;
+  // Open every outbound link in a new tab; keep in-page (#) anchors in the same tab.
+  document.querySelectorAll('a[href]').forEach(function(a){
+    var href = a.getAttribute('href');
+    if(href && href.charAt(0) !== '#'){
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
     }
-
-    agents = [];
-    let guard = 0;
-    while(agents.length<3 && guard++<400){
-      const x = 2+Math.random()*(COLS-4), y = 2+Math.random()*(ROWS-4);
-      if(truth[idx(Math.floor(x),Math.floor(y))]===0) agents.push({x,y,tx:x,ty:y});
-    }
-    agents.forEach(a=>{ truth[idx(Math.floor(a.x),Math.floor(a.y))]=0; });
-  }
-
-  function resize(){
-    const r = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(r.width*dpr);
-    canvas.height = Math.round(r.height*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    cw = r.width/COLS; ch = r.height/ROWS;
-  }
-
-  // cheap raycast reveal, so obstacles actually occlude
-  function sense(a){
-    const RANGE = 7;
-    for(let k=0;k<72;k++){
-      const th = (k/72)*Math.PI*2, dx = Math.cos(th), dy = Math.sin(th);
-      for(let s=0;s<RANGE*2;s++){
-        const px = Math.floor(a.x + dx*s*0.5), py = Math.floor(a.y + dy*s*0.5);
-        if(px<0||py<0||px>=COLS||py>=ROWS) break;
-        const i = idx(px,py);
-        if(truth[i]===1){ known[i]=2; break; }
-        known[i]=1;
-      }
-    }
-  }
-
-  function retarget(a){
-    let best=null, bd=Infinity;
-    for(let n=0;n<70;n++){
-      const x = Math.floor(Math.random()*COLS), y = Math.floor(Math.random()*ROWS);
-      if(known[idx(x,y)]!==0 || truth[idx(x,y)]===1) continue;
-      const d = Math.hypot(x-a.x, y-a.y);
-      if(d<bd){ bd=d; best={x,y}; }
-    }
-    if(best){ a.tx=best.x+.5; a.ty=best.y+.5; }
-    else { a.tx = 2+Math.random()*(COLS-4); a.ty = 2+Math.random()*(ROWS-4); }
-  }
-
-  function step(){
-    for(const a of agents){
-      let dx = a.tx-a.x, dy = a.ty-a.y;
-      const d = Math.hypot(dx,dy);
-      if(d < .45){ retarget(a); continue; }
-      const sp = 0.085;
-      let nx = a.x + (dx/d)*sp, ny = a.y + (dy/d)*sp;
-      if(truth[idx(Math.floor(nx),Math.floor(ny))]===1){ retarget(a); continue; }
-      a.x=nx; a.y=ny;
-      sense(a);
-    }
-  }
-
-  function draw(){
-    const r = canvas.getBoundingClientRect();
-    ctx.clearRect(0,0,r.width,r.height);
-
-    for(let y=0;y<ROWS;y++){
-      for(let x=0;x<COLS;x++){
-        const k = known[idx(x,y)];
-        ctx.fillStyle = k===0 ? C.unknown : (k===2 ? C.occ : C.free);
-        ctx.fillRect(x*cw, y*ch, cw+.5, ch+.5);
-      }
-    }
-
-    ctx.strokeStyle = C.grid; ctx.lineWidth = .5;
-    ctx.beginPath();
-    for(let x=0;x<=COLS;x+=3){ ctx.moveTo(x*cw,0); ctx.lineTo(x*cw,r.height); }
-    for(let y=0;y<=ROWS;y+=3){ ctx.moveTo(0,y*ch); ctx.lineTo(r.width,y*ch); }
-    ctx.stroke();
-
-    agents.forEach((a,i)=>{
-      const px=a.x*cw, py=a.y*ch;
-      ctx.strokeStyle = AGENT[i]; ctx.lineWidth = 1; ctx.globalAlpha = .5;
-      ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.stroke();
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = AGENT[i];
-      ctx.beginPath(); ctx.arc(px,py,2.4,0,Math.PI*2); ctx.fill();
-    });
-  }
-
-  function coverage(){
-    let seen=0; for(let i=0;i<known.length;i++) if(known[i]!==0) seen++;
-    return seen/known.length;
-  }
-
-  function reset(){ build(); agents.forEach(sense); }
-
-  let last = 0;
-  function loop(t){
-    if(t-last > 55){
-      last = t;
-      step();
-      draw();
-      const c = coverage();
-      if(cov) cov.textContent = Math.round(c*100)+'%';
-      if(c > 0.86) reset();
-    }
-    requestAnimationFrame(loop);
-  }
-
-  reset();
-  resize();
-  window.addEventListener('resize', ()=>{ resize(); draw(); });
-
-  if(reduced){
-    for(let n=0;n<180;n++) step();
-    draw();
-    if(cov) cov.textContent = Math.round(coverage()*100)+'%';
-  } else {
-    requestAnimationFrame(loop);
-  }
-})();
+  });
 </script>
+<script src="anim.js"></script>
 </body>
 </html>
