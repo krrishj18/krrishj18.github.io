@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#14171A"/>
+  <g transform="translate(360,165) scale(1.15)">
+    <g stroke="#2E8B57" stroke-width="4" stroke-linecap="round" fill="none">
+      <line x1="-32" y1="-20" x2="32" y2="20"/>
+      <line x1="32" y1="-20" x2="-32" y2="20"/>
+    </g>
+    <g fill="#2E8B57" opacity="0.22">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <g stroke="#2E8B57" stroke-width="3" fill="none">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <circle r="7" fill="#2E8B57"/>
+  </g>
+  <g transform="translate(195,205) scale(1.0)">
+    <g stroke="#C0392B" stroke-width="4" stroke-linecap="round" fill="none">
+      <line x1="-32" y1="-20" x2="32" y2="20"/>
+      <line x1="32" y1="-20" x2="-32" y2="20"/>
+    </g>
+    <g fill="#C0392B" opacity="0.22">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <g stroke="#C0392B" stroke-width="3" fill="none">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <circle r="7" fill="#C0392B"/>
+  </g>
+  <g transform="translate(300,275) scale(0.9)">
+    <g stroke="#3D63F0" stroke-width="4" stroke-linecap="round" fill="none">
+      <line x1="-32" y1="-20" x2="32" y2="20"/>
+      <line x1="32" y1="-20" x2="-32" y2="20"/>
+    </g>
+    <g fill="#3D63F0" opacity="0.22">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <g stroke="#3D63F0" stroke-width="3" fill="none">
+      <ellipse cx="-32" cy="-20" rx="12" ry="8"/><ellipse cx="32" cy="-20" rx="12" ry="8"/>
+      <ellipse cx="-32" cy="20" rx="12" ry="8"/><ellipse cx="32" cy="20" rx="12" ry="8"/>
+    </g>
+    <circle r="7" fill="#3D63F0"/>
+  </g>
+  <text x="96" y="430" font-family="Georgia, 'Times New Roman', serif" font-size="104" font-weight="500" fill="#F1F2ED">Krrish Jain</text>
+  <text x="100" y="482" font-family="'Courier New', monospace" font-size="27" letter-spacing="3" fill="#8A9299">GRADUATE RESEARCHER · ROBOTICS INSTITUTE, CMU</text>
+  <circle cx="112" cy="530" r="8" fill="#C0392B"/>
+  <circle cx="140" cy="530" r="8" fill="#2E8B57"/>
+  <circle cx="168" cy="530" r="8" fill="#3D63F0"/>
+  <text x="188" y="537" font-family="'Courier New', monospace" font-size="22" letter-spacing="2" fill="#6E7780">krrishjain.com</text>
+</svg>
