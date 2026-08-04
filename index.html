@@ -175,9 +175,16 @@ a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius
 .about-fig figcaption{
   position:absolute;left:0;bottom:0;right:0;
   font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
-  text-transform:uppercase;color:var(--muted);padding:5px 7px;
+  text-transform:uppercase;color:var(--muted);padding:16px 7px 5px;
   display:flex;justify-content:space-between;align-items:center;gap:8px;
-  background:linear-gradient(to top,rgba(var(--scrim),.92),rgba(var(--scrim),0));
+  /* hold the scrim opaque behind the text, fade only above it, so bright
+     voxels passing under the caption can't wash the glyphs out */
+  background:linear-gradient(to top,
+    rgba(var(--scrim),.96) 0%,
+    rgba(var(--scrim),.94) 58%,
+    rgba(var(--scrim),.55) 80%,
+    rgba(var(--scrim),0) 100%);
+  text-shadow:0 0 3px rgba(var(--scrim),.95),0 0 6px rgba(var(--scrim),.7);
 }
 .cov-legend{display:flex;align-items:center;gap:7px}
 .cov-legend .ag{display:flex;align-items:center;gap:3px}
